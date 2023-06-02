@@ -14,12 +14,18 @@ void ListaEnlazada::agregarAtras(const int elemento) {
         this->_actual = this->_primero;
         }
     else {
-        nodo* actual = this->_primero;
-        while (actual->siguiente != nullptr) {
+        if (this->_longitud == 1){
+            _primero -> siguiente = new nodo {elemento, this->_primero, this->_primero};
+        }
+        else{
+            nodo* actual = this->_primero -> siguiente;
+
+        while (actual->siguiente != this->_primero) {
             actual = actual->siguiente;
         }
-        actual->siguiente = new nodo {elemento, _primero, actual};
-    }
+            actual->siguiente = new nodo {elemento, this->_primero, actual};
+            this->_primero -> anterior = actual -> siguiente;       
+    }}
     this->_longitud++;
 }
 
@@ -38,9 +44,19 @@ int ListaEnlazada::iesimo(const int posicion) {
 ListaEnlazada::~ListaEnlazada() {
     nodo * actual = this->_primero;
     while (actual != nullptr) {
-        nodo* sig = actual->siguiente;
-        delete actual;
-        actual = sig;
+        // Caso base, 1 elemento
+        if(this->_longitud == 1){
+            delete actual;
+            actual = nullptr;
+        }
+        // Caso 2 o mas elemntos
+        else{
+            nodo* sig = actual->siguiente;
+            delete actual;
+            actual = sig;
+            _longitud--;
+        }
+
     }
     this->_primero = nullptr;
     this->_actual = nullptr; 
@@ -84,22 +100,24 @@ void ListaEnlazada::borrarIesimo(const int posicion) {
             this->_actual = _actual -> siguiente;
         }
     // Reconecto los nodos
-        actual -> anterior -> siguiente = actual -> siguiente;
         actual -> siguiente -> anterior = actual -> anterior;
+        actual -> anterior -> siguiente = actual -> siguiente;
+    }   
     // Elimino el nodo actual
         delete actual;
         actual = nullptr;
         this->_longitud--;
-    }
     
 }
 
 int ListaEnlazada::actual() {
-    return -1;
+    return this->_actual->elemento;
 }
 
 void ListaEnlazada::avanzar() {
+    this->_actual = this->_actual -> siguiente;
 }
 
 void ListaEnlazada::retroceder() {
+    this->_actual = this->_actual -> anterior;
 }
